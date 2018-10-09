@@ -1,0 +1,17 @@
+{{#if user}}
+  <p> You are currently logged in as {{user.username}}</p>
+  <a href="/logout"> Logout </a>
+{{else}}
+  <a href="/login"> Login </a>
+  <br>
+  <a href="/register"> Register </a>
+{{/if}}
+
+<br>
+<a href="/questions"> Answer Questions </a>
+<br>
+<a href="/history"> History </a>
+<br>
+<a href="/admin"> Admin Only </a>
+<br>
+<a href="/historyAdmin"> History for Admins </a>
