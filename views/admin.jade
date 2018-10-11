@@ -4,5 +4,14 @@ block content
   if user
     p You are logged in as !{user.username}
   h2 Here is the Admin page! 
+  form(role='form', action="/admin",method="post")
+      .form-group
+          input.form-control(type='text', name="question", placeholder='Enter question:')
+      .form-group
+        input.form-control(type='date', name="date", value="#{moment().format('YYYY-MM-DD')}")
+      button.btn.btn-default(type='submit') Submit
+      &nbsp;
+      a(href='/')
+        button.btn.btn-primary(type="button") Cancel
 
   a(href="/") Home

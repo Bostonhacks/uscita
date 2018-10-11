@@ -1,6 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 var Account = require('../models/account');
+var CustomQuestion = require('../models/custom_question');
 var router = express.Router();
 var authentication = require('../middlewares/authentication'); //authentication middlewares
 
@@ -56,6 +57,18 @@ router.get('/historyAdmin', authentication.isLoggedIn, authentication.isAdmin, f
 
 router.get('/admin', authentication.isLoggedIn, authentication.isAdmin, function(req, res) {
   res.render('admin', {user: req.user});
+});
+
+router.post('/admin', authentication.isLoggedIn, authentication.isAdmin, function(req, res) {
+    console.log(req.body.question);
+    console.log(req.body.date);
+    let date = new Date(req.body.date);
+    CustomQuestion.create({question: req.body.question, date: date}, function(err, question){
+      if (err) {
+        return res.render('admin', {info: err});
+      }
+      res.redirect('/');
+    });
 });
 
 router.get('/ping', function(req, res){
