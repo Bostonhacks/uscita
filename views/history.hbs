@@ -4,18 +4,17 @@
 <h2> Here is the History page! (This table needs to be filled in dynamically using hbs)</h2>
 <table class="table">
   <tr>
-    <th>Name</th>
     <th>Date</th>
-    <th>Score</th>
+    <th>Answer 1</th>
+    <th>Answer 2</th>
+    <th>Answer 3</th>
   </tr>
-  <tr>
-    <td>Jill</td>
-    <td>01/01</td>
-    <td>50</td>
-  </tr>
-  <tr>
-    <td>Eve</td>
-    <td>01/02</td>
-    <td>94</td>
-  </tr>
+  {{#each answers}}
+    <tr>
+      <td>{{formatDate this.date}}</td>
+      <td>{{this.answer1}}</td>
+      <td>{{this.answer2}}</td>
+      <td>{{this.answer3}}</td>
+    </tr>
+  {{/each}}
 </table>

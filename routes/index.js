@@ -2,9 +2,10 @@ var express = require('express');
 var passport = require('passport');
 var Account = require('../models/account');
 var CustomQuestion = require('../models/custom_question');
+var Answer = require('../models/answer');
 var router = express.Router();
 var authentication = require('../middlewares/authentication'); //authentication middlewares
-
+var moment = require('moment');
 
 router.get('/', function (req, res) {
     res.render('index', { user : req.user });
@@ -44,11 +45,41 @@ router.get('/logout', function(req, res) {
 });
 
 router.get('/questions', authentication.isLoggedIn, function(req, res) {
-  res.render('questions', {user: req.user});
+  // hack around -4 time zone of US. Change to -5 for Ecuador
+  CustomQuestion.findOne({date: moment().startOf("day").subtract(4, "hours").toISOString()}, (err, question) => {
+    // if cannot find question of the day
+    if (question) {
+      res.render('questions', {user: req.user, custom_question: question.question});
+    } else {
+      res.render('questions', {user: req.user, custom_question: "You can skip this one"});
+    }    
+  });  
+});
+
+// handle answer submission
+router.post('/questions', authentication.isLoggedIn, function(req, res){
+  console.log(moment());
+  Answer.create({
+    student: req.user._id,
+    date: moment().startOf("day").subtract(4, "hours"), // -4 time zone of Boston
+    answer1: req.body.question1,
+    answer2: req.body.question2,
+    answer3: req.body.question3
+  }, function(err, answer){
+    if (err) {
+      return res.render('questions', {info: err});
+    }
+  });
+  res.redirect("/questions");
 });
 
 router.get('/history', authentication.isLoggedIn, function(req, res) {
-  res.render('history', {user: req.user});
+  Answer.find({student: req.user._id}, null, {sort: {date: -1}}, (err, answers) => {
+    if (err) {
+      return res.render('history', {info: err});
+    }
+    res.render('history', {user: req.user, answers: answers});
+  });
 });
 
 router.get('/historyAdmin', authentication.isLoggedIn, authentication.isAdmin, function(req, res) {
@@ -56,16 +87,14 @@ router.get('/historyAdmin', authentication.isLoggedIn, authentication.isAdmin, f
 });
 
 router.get('/admin', authentication.isLoggedIn, authentication.isAdmin, function(req, res) {
-  res.render('admin', {user: req.user});
+  res.render('admin', {user: req.user, current_date: moment().format('YYYY-MM-DD')} );
 });
 
 router.post('/admin', authentication.isLoggedIn, authentication.isAdmin, function(req, res) {
-    console.log(req.body.question);
-    console.log(req.body.date);
     let date = new Date(req.body.date);
     CustomQuestion.create({question: req.body.question, date: date}, function(err, question){
       if (err) {
-        return res.render('admin', {info: err});
+        return res.render('admin', {info: err}); // FIX TO HAVE BETTER ERROR MESSAGES
       }
       res.redirect('/');
     });
