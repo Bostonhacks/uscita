@@ -19,11 +19,18 @@ var app = express();
 
 var hbs = require("express-handlebars")({
   defaultLayout: "layout",
-  extname: ".hbs"
+  extname: ".hbs",
+  helpers: {
+    formatDate: function(date) {
+      return `${date.getUTCMonth()}/${date.getUTCDate()}/${date.getUTCFullYear()}`;
+    }
+  }
 });
 app.engine("hbs", hbs);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
+
+app.locals.moment = require('moment-timezone');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
