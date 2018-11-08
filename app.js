@@ -70,7 +70,8 @@ passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
-mongoose.connect("mongodb://localhost/passport_local_mongoose_express4");
+// mongoose.connect("mongodb://localhost/passport_local_mongoose_express4");
+mongoose.connect("mongodb://uscita_test:bhacks18@ds125381.mlab.com:25381/uscita-dev");
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
